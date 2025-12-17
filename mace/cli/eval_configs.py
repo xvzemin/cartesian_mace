@@ -11,7 +11,7 @@ import ase.data
 import ase.io
 import numpy as np
 import torch
-from e3nn import o3
+from cartnn import o3
 
 from mace import data
 from mace.cli.convert_e3nn_cueq import run as run_e3nn_to_cueq

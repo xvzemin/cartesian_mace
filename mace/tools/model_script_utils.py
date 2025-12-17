@@ -2,7 +2,7 @@ import ast
 import logging
 
 import numpy as np
-from e3nn import o3
+from cartnn import o3
 
 from mace import modules
 from mace.modules.wrapper_ops import CuEquivarianceConfig

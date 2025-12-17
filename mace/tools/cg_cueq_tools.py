@@ -18,7 +18,7 @@ from __future__ import annotations
 from typing import Optional
 
 import numpy as np
-from e3nn import o3
+from cartnn import o3
 
 from mace.tools.cg import U_matrix_real
 

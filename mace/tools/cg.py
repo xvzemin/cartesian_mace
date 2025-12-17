@@ -5,33 +5,20 @@
 ###########################################################################################
 
 import collections
-import itertools
-import os
-from typing import Iterator, List, Union
+from typing import List, Union
 
-import numpy as np
+
 import torch
-from e3nn import o3
+from cartnn import o3
 
-try:
-    import cuequivariance as cue
-
-    CUET_AVAILABLE = True
-except ImportError:
-    CUET_AVAILABLE = False
-
-USE_CUEQ_CG = os.environ.get("MACE_USE_CUEQ_CG", "0").lower() in (
-    "1",
-    "true",
-    "yes",
-    "y",
-)
+CUET_AVAILABLE = False
+USE_CUEQ_CG = False
 
 _TP = collections.namedtuple("_TP", "op, args")
 _INPUT = collections.namedtuple("_INPUT", "tensor, start, stop")
 
 
-def _wigner_nj(
+def _cartesian_nj(
     irrepss: List[o3.Irreps],
     normalization: str = "component",
     filter_ir_mid=None,
@@ -55,7 +42,7 @@ def _wigner_nj(
 
     *irrepss_left, irreps_right = irrepss
     ret = []
-    for ir_left, path_left, C_left in _wigner_nj(
+    for ir_left, path_left, C_left in _cartesian_nj(
         irrepss_left,
         normalization=normalization,
         filter_ir_mid=filter_ir_mid,
@@ -67,7 +54,7 @@ def _wigner_nj(
                 if filter_ir_mid is not None and ir_out not in filter_ir_mid:
                     continue
 
-                C = o3.wigner_3j(ir_out.l, ir_left.l, ir.l, dtype=dtype)
+                C = o3.cartesian_3j(ir_out.l, ir_left.l, ir.l, dtype=dtype)
                 if normalization == "component":
                     C *= ir_out.dim**0.5
                 if normalization == "norm":
@@ -116,30 +103,11 @@ def U_matrix_real(
     irreps_out = o3.Irreps(irreps_out)
     irrepss = [o3.Irreps(irreps_in)] * correlation
 
-    if use_cueq_cg is None:
-        use_cueq_cg = USE_CUEQ_CG
-    if correlation == 4 and not use_cueq_cg:
+    if correlation == 4:
         filter_ir_mid = [(i, 1 if i % 2 == 0 else -1) for i in range(12)]
-    if use_cueq_cg and CUET_AVAILABLE:
-        return compute_U_cueq(  # pylint: disable=possibly-used-before-assignment
-            irreps_in, irreps_out=irreps_out, correlation=correlation, dtype=dtype
-        )
-
-    try:
-        wigners = _wigner_nj(irrepss, normalization, filter_ir_mid, dtype)
-    except NotImplementedError as e:
-        if CUET_AVAILABLE:
-            return compute_U_cueq(  # pylint: disable=possibly-used-before-assignment
-                irreps_in,
-                irreps_out=irreps_out,
-                correlation=correlation,
-                use_nonsymmetric_product=use_nonsymmetric_product,
-                dtype=dtype,
-            )
-        raise NotImplementedError(
-            "The requested Clebsch-Gordan coefficients are not implemented, please install cuequivariance; pip install cuequivariance"
-        ) from e
-
+   
+    wigners = _cartesian_nj(irrepss, normalization, filter_ir_mid, dtype)
+   
     current_ir = wigners[0][0]
     out = []
     stack = torch.tensor([])

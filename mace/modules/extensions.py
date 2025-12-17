@@ -125,7 +125,7 @@ class MACELES(ScaleShiftMACE):
 
         # Embeddings
         node_feats = self.node_embedding(data["node_attrs"])
-        edge_attrs = self.spherical_harmonics(vectors)
+        edge_attrs = self.cartesian_harmonics(vectors)
         edge_feats, cutoff = self.radial_embedding(
             lengths, data["node_attrs"], data["edge_index"], self.atomic_numbers
         )

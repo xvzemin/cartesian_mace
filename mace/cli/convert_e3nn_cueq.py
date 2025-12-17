@@ -4,7 +4,7 @@ import os
 from typing import Dict, List, Tuple, Union
 
 import torch
-from e3nn import o3
+from cartnn import o3
 
 from mace.modules.wrapper_ops import CuEquivarianceConfig
 from mace.tools.cg import O3_e3nn

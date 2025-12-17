@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 import numpy as np
 import torch
-from e3nn import o3
+from cartnn import o3
 from e3nn.util.jit import compile_mode
 
 from mace.modules.embeddings import GenericJointEmbedding
@@ -142,9 +142,9 @@ class MACE(torch.nn.Module):
             self.pair_repulsion = True
 
         if not use_so3:
-            sh_irreps = o3.Irreps.spherical_harmonics(max_ell)
+            sh_irreps = o3.Irreps.cartesian_harmonics(max_ell)
         else:
-            sh_irreps = o3.Irreps.spherical_harmonics(max_ell, p=1)
+            sh_irreps = o3.Irreps.cartesian_harmonics(max_ell, p=1)
         num_features = hidden_irreps.count(o3.Irrep(0, 1))
 
         # interaction_irreps = (sh_irreps * num_features).sort()[0].simplify()
@@ -158,8 +158,11 @@ class MACE(torch.nn.Module):
         interaction_irreps = (sh_irreps_inter * num_features).sort()[0].simplify()
         interaction_irreps_first = (sh_irreps * num_features).sort()[0].simplify()
 
-        self.spherical_harmonics = o3.SphericalHarmonics(
-            sh_irreps, normalize=True, normalization="component"
+        self.cartesian_harmonics = o3.CartesianHarmonics(
+            irreps_out=sh_irreps, 
+            normalize=True, 
+            norm=True, 
+            traceless=True
         )
         if radial_MLP is None:
             radial_MLP = [64, 64, 64]
@@ -317,7 +320,7 @@ class MACE(torch.nn.Module):
         )  # [n_graphs, n_heads]
         # Embeddings
         node_feats = self.node_embedding(data["node_attrs"])
-        edge_attrs = self.spherical_harmonics(vectors)
+        edge_attrs = self.cartesian_harmonics(vectors)
         edge_feats, cutoff = self.radial_embedding(
             lengths, data["node_attrs"], data["edge_index"], self.atomic_numbers
         )
@@ -498,7 +501,7 @@ class ScaleShiftMACE(MACE):
 
         # Embeddings
         node_feats = self.node_embedding(data["node_attrs"])
-        edge_attrs = self.spherical_harmonics(vectors)
+        edge_attrs = self.cartesian_harmonics(vectors)
         edge_feats, cutoff = self.radial_embedding(
             lengths, data["node_attrs"], data["edge_index"], self.atomic_numbers
         )
@@ -675,11 +678,14 @@ class AtomicDipolesMACE(torch.nn.Module):
         )
         edge_feats_irreps = o3.Irreps(f"{self.radial_embedding.out_dim}x0e")
 
-        sh_irreps = o3.Irreps.spherical_harmonics(max_ell)
+        sh_irreps = o3.Irreps.cartesian_harmonics(max_ell)
         num_features = hidden_irreps.count(o3.Irrep(0, 1))
         interaction_irreps = (sh_irreps * num_features).sort()[0].simplify()
-        self.spherical_harmonics = o3.SphericalHarmonics(
-            sh_irreps, normalize=True, normalization="component"
+        self.cartesian_harmonics = o3.CartesianHarmonics(
+            irreps_out=sh_irreps, 
+            normalize=True, 
+            norm=True, 
+            traceless=True
         )
         if radial_MLP is None:
             radial_MLP = [64, 64, 64]
@@ -782,7 +788,7 @@ class AtomicDipolesMACE(torch.nn.Module):
             edge_index=data["edge_index"],
             shifts=data["shifts"],
         )
-        edge_attrs = self.spherical_harmonics(vectors)
+        edge_attrs = self.cartesian_harmonics(vectors)
         edge_feats, cutoff = self.radial_embedding(
             lengths, data["node_attrs"], data["edge_index"], self.atomic_numbers
         )
@@ -919,11 +925,14 @@ class AtomicDielectricMACE(torch.nn.Module):
         )
         edge_feats_irreps = o3.Irreps(f"{self.radial_embedding.out_dim}x0e")
 
-        sh_irreps = o3.Irreps.spherical_harmonics(max_ell)
+        sh_irreps = o3.Irreps.cartesian_harmonics(max_ell)
         num_features = hidden_irreps.count(o3.Irrep(0, 1))
         interaction_irreps = (sh_irreps * num_features).sort()[0].simplify()
-        self.spherical_harmonics = o3.SphericalHarmonics(
-            sh_irreps, normalize=True, normalization="component"
+        self.cartesian_harmonics = o3.CartesianHarmonics(
+            irreps_out=sh_irreps, 
+            normalize=True, 
+            norm=True, 
+            traceless=True
         )
         if radial_MLP is None:
             radial_MLP = [64, 64, 64]
@@ -1043,7 +1052,7 @@ class AtomicDielectricMACE(torch.nn.Module):
             edge_index=data["edge_index"],
             shifts=data["shifts"],
         )
-        edge_attrs = self.spherical_harmonics(vectors)
+        edge_attrs = self.cartesian_harmonics(vectors)
         edge_feats, cutoff = self.radial_embedding(
             lengths, data["node_attrs"], data["edge_index"], self.atomic_numbers
         )
@@ -1213,11 +1222,14 @@ class EnergyDipolesMACE(torch.nn.Module):
         )
         edge_feats_irreps = o3.Irreps(f"{self.radial_embedding.out_dim}x0e")
 
-        sh_irreps = o3.Irreps.spherical_harmonics(max_ell)
+        sh_irreps = o3.Irreps.cartesian_harmonics(max_ell)
         num_features = hidden_irreps.count(o3.Irrep(0, 1))
         interaction_irreps = (sh_irreps * num_features).sort()[0].simplify()
-        self.spherical_harmonics = o3.SphericalHarmonics(
-            sh_irreps, normalize=True, normalization="component"
+        self.cartesian_harmonics = o3.CartesianHarmonics(
+            irreps_out=sh_irreps, 
+            normalize=True, 
+            norm=True, 
+            traceless=True
         )
         if radial_MLP is None:
             radial_MLP = [64, 64, 64]
@@ -1344,7 +1356,7 @@ class EnergyDipolesMACE(torch.nn.Module):
             edge_index=data["edge_index"],
             shifts=data["shifts"],
         )
-        edge_attrs = self.spherical_harmonics(vectors)
+        edge_attrs = self.cartesian_harmonics(vectors)
         edge_feats, cutoff = self.radial_embedding(
             lengths, data["node_attrs"], data["edge_index"], self.atomic_numbers
         )

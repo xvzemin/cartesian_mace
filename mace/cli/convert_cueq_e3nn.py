@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple, Union
 
 import numpy as np
 import torch
-from e3nn import o3
+from cartnn import o3
 
 from mace.tools.cg import O3_e3nn
 from mace.tools.cg_cueq_tools import symmetric_contraction_proj

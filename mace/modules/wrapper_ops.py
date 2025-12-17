@@ -7,7 +7,7 @@ import types
 from typing import List, Optional
 
 import torch
-from e3nn import o3
+from cartnn import o3
 
 from mace.modules.symmetric_contraction import SymmetricContraction
 from mace.tools.cg import O3_e3nn

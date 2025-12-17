@@ -7,7 +7,7 @@
 from typing import List, Optional, Tuple
 
 import torch
-from e3nn import o3
+from cartnn import o3
 from e3nn.util.jit import compile_mode
 
 from mace.modules.wrapper_ops import CuEquivarianceConfig

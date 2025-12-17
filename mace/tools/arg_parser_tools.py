@@ -2,7 +2,7 @@ import ast
 import logging
 import os
 
-from e3nn import o3
+from cartnn import o3
 
 
 def check_args(args):
@@ -35,7 +35,7 @@ def check_args(args):
         and args.max_L is not None
     ):
         args.hidden_irreps = o3.Irreps(
-            (args.num_channels * o3.Irreps.spherical_harmonics(args.max_L))
+            (args.num_channels * o3.Irreps.cartesian_harmonics(args.max_L))
             .sort()
             .irreps.simplify()
         )
@@ -58,7 +58,7 @@ def check_args(args):
         assert args.num_channels > 0, "num_channels must be positive integer"
         assert args.max_L >= 0, "max_L must be non-negative integer"
         args.hidden_irreps = o3.Irreps(
-            (args.num_channels * o3.Irreps.spherical_harmonics(args.max_L))
+            (args.num_channels * o3.Irreps.cartesian_harmonics(args.max_L))
             .sort()
             .irreps.simplify()
         )
@@ -78,7 +78,7 @@ def check_args(args):
         assert args.max_L >= 0, "max_L must be non-negative integer"
         args.num_channels = 128
         args.hidden_irreps = o3.Irreps(
-            (args.num_channels * o3.Irreps.spherical_harmonics(args.max_L))
+            (args.num_channels * o3.Irreps.cartesian_harmonics(args.max_L))
             .sort()
             .irreps.simplify()
         )
@@ -86,7 +86,7 @@ def check_args(args):
         assert args.num_channels > 0, "num_channels must be positive integer"
         args.max_L = 1
         args.hidden_irreps = o3.Irreps(
-            (args.num_channels * o3.Irreps.spherical_harmonics(args.max_L))
+            (args.num_channels * o3.Irreps.cartesian_harmonics(args.max_L))
             .sort()
             .irreps.simplify()
         )

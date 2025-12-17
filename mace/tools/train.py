@@ -310,6 +310,8 @@ def train(
                             )
                             if exit_now is not None:
                                 exit_now.fill_(1)
+                            else:
+                                break
                     if save_all_checkpoints:
                         param_context = (
                             ema.average_parameters()

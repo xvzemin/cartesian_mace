@@ -7,6 +7,19 @@
 [![Documentation Status](https://readthedocs.org/projects/mace/badge/)](https://mace-docs.readthedocs.io/en/latest/)
 [![DOI](https://zenodo.org/badge/505964914.svg)](https://doi.org/10.5281/zenodo.14103332)
 
+## About Cartesian MACE
+
+This approach is based on the `cartnn` package  
+<https://github.com/xvzemin/tace>
+
+It adopts **cartesian-3j**, replacing the spherical tensor product with the **Irreducible Cartesian Tensor Product (ICTP)**, and **does not use ICTC** in the implementation.
+
+Note that when **max_ell** and **correlation $\ge 3$**, the construction of **cartesian-nj** becomes significantly slower.
+
+Therefore, this method is only recommended for exploratory research by those interested in the underlying theory or implementation details, and is not recommended for practical production use.
+
+The input file is the same as the original MACE input file. Acceleration libraries are not allowed.
+
 ## Table of contents
 
 - [MACE](#mace)

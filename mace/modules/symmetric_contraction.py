@@ -10,7 +10,7 @@ from typing import Dict, Optional, Union
 import opt_einsum_fx
 import torch
 import torch.fx
-from e3nn import o3
+from cartnn import o3
 from e3nn.util.codegen import CodeGenMixin
 from e3nn.util.jit import compile_mode
 
@@ -49,7 +49,8 @@ class SymmetricContraction(CodeGenMixin, torch.nn.Module):
 
         self.irreps_in = o3.Irreps(irreps_in)
         self.irreps_out = o3.Irreps(irreps_out)
-
+        print(self.irreps_in)
+        print(self.irreps_out)
         del irreps_in, irreps_out
 
         if not isinstance(correlation, tuple):
@@ -237,7 +238,6 @@ class Contraction(torch.nn.Module):
             self.weights_max = weights[-1]
 
     def forward(self, x: torch.Tensor, y: torch.Tensor):
-
         out = self.graph_opt_main(
             self.U_tensors(self.correlation),
             self.weights_max,

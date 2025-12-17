@@ -18,7 +18,7 @@ import numpy as np
 import torch
 from ase.calculators.calculator import Calculator, all_changes
 from ase.stress import full_3x3_to_voigt_6_stress
-from e3nn import o3
+from cartnn import o3
 
 from mace import data as mace_data
 from mace.modules.utils import extract_invariant
