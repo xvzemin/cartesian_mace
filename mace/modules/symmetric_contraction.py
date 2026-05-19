@@ -49,8 +49,6 @@ class SymmetricContraction(CodeGenMixin, torch.nn.Module):
 
         self.irreps_in = o3.Irreps(irreps_in)
         self.irreps_out = o3.Irreps(irreps_out)
-        print(self.irreps_in)
-        print(self.irreps_out)
         del irreps_in, irreps_out
 
         if not isinstance(correlation, tuple):
